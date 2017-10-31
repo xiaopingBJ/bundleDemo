@@ -3,5 +3,5 @@
     <meta_directives>
         <timestamp>2017-10-31T16:28:10.415+08:00</timestamp>
     </meta_directives>
-    <define name="ZOSPT" type="http://www.ibm.com/xmlns/prod/cics/bundle/LIBRARY" path="ZOSPT.library"/>
+    <define name="ZOSPTLIB" type="http://www.ibm.com/xmlns/prod/cics/bundle/LIBRARY" path="ZOSPTLIB.library"/>
 </manifest>
