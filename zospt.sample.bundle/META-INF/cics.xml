@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<manifest xmlns="http://www.ibm.com/xmlns/prod/cics/bundle" id="zospt.sample.bundle" bundleMajorVer="1" bundleMinorVer="0" bundleMicroVer="0" bundleVersion="1" bundleRelease="0" build="IntB-201705232112">
+    <meta_directives>
+        <timestamp>2017-09-28T16:31:59.149+08:00</timestamp>
+    </meta_directives>
+    <define name="DELAYPG1" type="http://www.ibm.com/xmlns/prod/cics/bundle/PROGRAM" path="DELAYPG1.program"/>
+    <define name="DELAYPG2" type="http://www.ibm.com/xmlns/prod/cics/bundle/PROGRAM" path="DELAYPG2.program"/>
+    <define name="DLY1" type="http://www.ibm.com/xmlns/prod/cics/bundle/TRANSACTION" path="DLY1.transaction"/>
+    <define name="DLY2" type="http://www.ibm.com/xmlns/prod/cics/bundle/TRANSACTION" path="DLY2.transaction"/>
+    <define name="MAIN" type="http://www.ibm.com/xmlns/prod/cics/bundle/TRANSACTION" path="MAIN.transaction"/>
+    <define name="MAINPROG" type="http://www.ibm.com/xmlns/prod/cics/bundle/PROGRAM" path="MAINPROG.program"/>
+</manifest>

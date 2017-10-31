@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<policy:policy xmlns:policy="http://www.ibm.com/xmlns/prod/cics/managedplatform/policy" policySchemaRelease="0" policySchemaVersion="2">
+  <description></description>
+  <userTag></userTag>
+  <rule group="TASK" type="time">
+    <name>ElapseTimeNoMoreThan3</name>
+    <description></description>
+    <timeCondition item="elapsedlimit" operator="GT" unit="S" value="3"/>
+    <action>
+      <abend abendCode="AABB"/>
+    </action>
+  </rule>
+</policy:policy>

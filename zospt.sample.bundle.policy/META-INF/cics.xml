@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<manifest xmlns="http://www.ibm.com/xmlns/prod/cics/bundle" id="zospt.sample.bundle.policy" bundleMajorVer="1" bundleMinorVer="0" bundleMicroVer="0" bundleVersion="1" bundleRelease="0" build="IntB-201705232112">
+    <meta_directives>
+        <timestamp>2017-09-28T16:53:34.012+08:00</timestamp>
+    </meta_directives>
+    <define name="ElapseTimePolicy1" type="http://www.ibm.com/xmlns/prod/cics/bundle/POLICY" path="ElapseTimePolicy1.policy"/>
+    <define name="ElapseTimePolicy2" type="http://www.ibm.com/xmlns/prod/cics/bundle/POLICY" path="ElapseTimePolicy2.policy"/>
+    <modify>
+        <entrypoint name="DLY1" type="http://www.ibm.com/xmlns/prod/cics/bundle/TRANSACTION" operation="ODLY1"/>
+    </modify>
+    <modify>
+        <entrypoint name="DLY2" type="http://www.ibm.com/xmlns/prod/cics/bundle/TRANSACTION" operation="ODLY2"/>
+    </modify>
+    <modify>
+        <policyscope name="ElapseTimePolicy1" type="http://www.ibm.com/xmlns/prod/cics/bundle/POLICY" operation="ODLY1"/>
+    </modify>
+    <modify>
+        <policyscope name="ElapseTimePolicy2" type="http://www.ibm.com/xmlns/prod/cics/bundle/POLICY" operation="ODLY2"/>
+    </modify>
+</manifest>
