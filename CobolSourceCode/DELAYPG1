@@ -8,12 +8,12 @@
       * disclosure restricted by GSA ADP Schedule Contract with IBM Corp
       *
       ******************************************************************
-      * DELAYPG2 - Implement DELAY function in a loop
+      * DELAYPG1 - Implement DELAY function in a loop
       *
       ******************************************************************
        IDENTIFICATION DIVISION.
 
-       Program-id. DELAYPG2.
+       Program-id. DELAYPG1.
 
        Environment division.
 
@@ -51,5 +51,5 @@
            EXEC CICS RETURN END-EXEC.
            Goback.
 
-       End program DELAYPG2.
+       End program DELAYPG3.
 

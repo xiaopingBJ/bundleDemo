@@ -1,0 +1,184 @@
+      * Licensed Materials - Property of IBM
+      *
+      * SAMPLE
+      *
+      * (c) Copyright IBM Corp. 2017 All Rights Reserved
+      *
+      * US Government Users Restricted Rights - Use, duplication or
+      * disclosure restricted by GSA ADP Schedule Contract with IBM Corp
+      *
+      ******************************************************************
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. MAINPROG.
+      ***** Main Procedure *****
+       ENVIRONMENT DIVISION.
+      *
+       DATA DIVISION.
+      *
+       WORKING-STORAGE SECTION.
+      *
+       01 W-RESP         PIC S9(8) USAGE BINARY.
+       01 W-RESP2        PIC S9(8) USAGE BINARY.
+       01 CHLDTOKN1      PIC X(16) VALUE SPACE.
+       01 CHLDTOKN2      PIC X(16) VALUE SPACE.
+       01 CHLDTOKN3      PIC X(16) VALUE SPACE.
+       01 CHLDTOKN4      PIC X(16) VALUE SPACE.
+       01 ANYTOKN        PIC X(16) VALUE SPACE.
+       01 W00-MESSAGE    PIC X(80) VALUE SPACES.
+
+       01 CVDA           PIC S9(8) COMP-5 SYNC.
+
+       01 INCONTAINER    PIC X(16) value 'INCONT'.
+       01 OUTCONTAINER   PIC X(16) VALUE 'OUTCONT'.
+       01 CHLDCHNL1      PIC X(16).
+       01 CHLDCHNL2      PIC X(16).
+       01 ANYCHNL        PIC X(16).
+
+      * parameter string
+
+       01  PARM-STRING.
+         02  PARM-STRING-ARRAY       PIC X(1) OCCURS 100 TIMES.
+      *
+       01  TRANSNAME          PIC X(8) VALUE SPACES.
+       01  DELAY1             PIC X(1) VALUE SPACES.
+       01  DELAY2             PIC X(1) VALUE SPACES.
+       01  PARM-LEN           PIC S9(03) BINARY.
+
+
+
+       01 TIMEOUT1       PIC S9(8) USAGE BINARY VALUE 1000.
+
+       1 PRINT-LINE.
+         2 PARENT-PROGRAM   PIC X(8)  VALUE 'MAIN'.
+         2 FILLER           PIC X(1)  VALUE ' '.
+         2 CHILD-1          PIC X(4)  VALUE 'DLY1'.
+         2 FILLER           PIC X(1)  VALUE '('.
+         2 CHILD1-STATUS    PIC X(5)  VALUE SPACE.
+         2 FILLER           PIC X(2)  VALUE ') '.
+         2 CHILD-2          PIC X(4)  VALUE 'DLY2'.
+         2 FILLER           PIC X(1)  VALUE '('.
+         2 CHILD2-STATUS    PIC X(5)  VALUE SPACE.
+         2 FILLER           PIC X(2)  VALUE ') '.
+
+      *
+       LINKAGE SECTION.
+      *
+       PROCEDURE DIVISION USING DFHEIBLK DFHCOMMAREA.
+      *retrieve parameter for delay time
+
+
+           MOVE SPACES TO PARM-STRING.
+           MOVE LENGTH OF PARM-STRING TO PARM-LEN.
+           EXEC CICS RECEIVE
+                INTO( PARM-STRING )
+                LENGTH(PARM-LEN )
+           END-EXEC.
+
+           EXEC CICS IGNORE CONDITION LENGERR END-EXEC.
+           UNSTRING PARM-STRING DELIMITED BY ALL ','
+                        INTO TRANSNAME
+                             DELAY1
+                             DELAY2.
+
+      * run child 1
+           EXEC CICS PUT CONTAINER(INCONTAINER)
+           FROM(DELAY1)
+           CHANNEL('PG1CHNL')
+           END-EXEC.
+
+           EXEC CICS RUN TRANSID('DLY1')
+           CHANNEL('PG1CHNL') CHILD(CHLDTOKN1)
+           END-EXEC.
+
+      * run child 2
+           EXEC CICS PUT CONTAINER(INCONTAINER)
+           FROM(DELAY2)
+           CHANNEL('PG1CHNL')
+           END-EXEC.
+
+           EXEC CICS RUN TRANSID('DLY2')
+           CHANNEL('PG1CHNL') CHILD(CHLDTOKN2)
+           END-EXEC.
+
+
+      * fetch with suspend to get the result from the first child
+           EXEC CICS FETCH CHILD(CHLDTOKN1) CHANNEL(CHLDCHNL1)
+           COMPSTATUS(CVDA)
+           RESP(W-RESP) RESP2(W-RESP2)
+           END-EXEC.
+
+           IF W-RESP = DFHRESP(NORMAL) THEN
+              IF CVDA = 900 THEN
+              MOVE 'ABEND' TO CHILD1-STATUS
+              END-IF
+              IF CVDA = 1016 THEN
+              MOVE 'OK' TO CHILD1-STATUS
+              END-IF
+           END-IF.
+
+      * fetch the second child with timeout
+           EXEC CICS FETCH CHILD(CHLDTOKN2) CHANNEL(CHLDCHNL2)
+           COMPSTATUS(CVDA)
+           RESP(W-RESP) RESP2(W-RESP2)
+           END-EXEC.
+
+           IF W-RESP = DFHRESP(NORMAL) THEN
+              IF CVDA = DFHVALUE(ABEND) THEN
+              MOVE 'ABEND' TO CHILD2-STATUS
+              END-IF
+              IF CVDA = DFHVALUE(NORMAL) THEN
+              MOVE 'OK' TO CHILD2-STATUS
+              END-IF
+           END-IF.
+
+
+
+           EXEC CICS SEND TEXT FROM(PRINT-LINE) FREEKB END-EXEC.
+
+           EXEC CICS RETURN END-EXEC.
+
+
+       A-MAIN-END.
+      *
+      *
+
+           EXEC CICS RETURN
+           END-EXEC.
+      *
+           GOBACK.
+           EJECT
+
+      * ------------------------------------------------------------- *
+       USAGE-ERROR SECTION.
+      * ------------------------------------------------------------- *
+      *
+           MOVE SPACES TO W00-MESSAGE.
+           MOVE 'Usage:MAIN,<delay1>,<delay2>' TO W00-MESSAGE.
+           PERFORM DISPLAY-MESSAGE.
+      *
+       USAGE-ERROR-END.
+      *
+      *    RETURN TO PERFORMING FUNCTION
+      *
+           EXIT.
+      *
+
+      * ------------------------------------------------------------- *
+       DISPLAY-MESSAGE SECTION.
+      * ------------------------------------------------------------- *
+      *
+           EXEC CICS SEND
+                     FROM( W00-MESSAGE )
+                     LENGTH( 79 )
+                     ERASE
+           END-EXEC.
+           MOVE SPACES TO W00-MESSAGE.
+      *
+       DISPLAY-MESSAGE-END.
+      *
+      *    RETURN TO PERFORMING FUNCTION
+      *
+           EXIT.
+      *
+
+       END PROGRAM 'MAINPROG'.

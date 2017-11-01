@@ -1,1 +1,1 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><cicsdefinitionlibrary dsname01="ZOSPT.LOAD" name="ZOSPTLIB" ranking="50" xmlns="http://www.ibm.com/xmlns/prod/CICS/smw2int"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><cicsdefinitionlibrary dsname01="XIAOPIN.ZOSPT.LOAD" name="ZOSPTLIB" ranking="50" xmlns="http://www.ibm.com/xmlns/prod/CICS/smw2int"/>
